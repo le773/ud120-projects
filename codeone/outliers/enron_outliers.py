@@ -1,4 +1,3 @@
-#!/usr/bin/python
 
 import pickle
 import sys
@@ -14,6 +13,3 @@ data = featureFormat(data_dict, features)
 
 
 ### your code below
-
-
-

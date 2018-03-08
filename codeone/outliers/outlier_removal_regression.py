@@ -1,5 +1,3 @@
-#!/usr/bin/python
-
 import random
 import numpy
 import matplotlib.pyplot as plt
@@ -81,4 +79,3 @@ if len(cleaned_data) > 0:
 
 else:
     print "outlierCleaner() is returning an empty list, no refitting to be done"
-

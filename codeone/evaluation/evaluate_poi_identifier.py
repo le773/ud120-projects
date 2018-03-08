@@ -1,6 +1,3 @@
-#!/usr/bin/python
-
-
 """
     Starter code for the evaluation mini-project.
     Start by copying your trained/tested POI identifier from
@@ -24,8 +21,9 @@ features_list = ["poi", "salary"]
 data = featureFormat(data_dict, features_list)
 labels, features = targetFeatureSplit(data)
 
+print 'labels:', len(labels)
+print 'features:', len(features)
 
 
-### your code goes here 
 
-
+### your code goes here

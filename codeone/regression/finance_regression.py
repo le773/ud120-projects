@@ -1,8 +1,7 @@
-#!/usr/bin/python
 
 """
     Starter code for the regression mini-project.
-    
+
     Loads up/formats a modified version of the dataset
     (why modified?  we've removed some trouble points
     that you'll find yourself in the outliers mini-project).
@@ -10,7 +9,7 @@
     Draws a little scatterplot of the training/testing data
 
     You fill in the regression code where indicated:
-"""    
+"""
 
 
 import sys
@@ -19,7 +18,7 @@ sys.path.append("../tools/")
 from feature_format import featureFormat, targetFeatureSplit
 dictionary = pickle.load( open("../final_project/final_project_dataset_modified.pkl", "r") )
 
-### list the features you want to look at--first item in the 
+### list the features you want to look at--first item in the
 ### list will be the "target" feature
 features_list = ["bonus", "salary"]
 data = featureFormat( dictionary, features_list, remove_any_zeroes=True)
@@ -34,7 +33,7 @@ test_color = "b"
 
 
 ### Your regression goes here!
-### Please name it reg, so that the plotting code below picks it up and 
+### Please name it reg, so that the plotting code below picks it up and
 ### plots it correctly. Don't forget to change the test_color above from "b" to
 ### "r" to differentiate training points from test points.
 
@@ -48,9 +47,9 @@ test_color = "b"
 ### draw the scatterplot, with color-coded training and testing points
 import matplotlib.pyplot as plt
 for feature, target in zip(feature_test, target_test):
-    plt.scatter( feature, target, color=test_color ) 
+    plt.scatter( feature, target, color=test_color )
 for feature, target in zip(feature_train, target_train):
-    plt.scatter( feature, target, color=train_color ) 
+    plt.scatter( feature, target, color=train_color )
 
 ### labels for the legend
 plt.scatter(feature_test[0], target_test[0], color=test_color, label="test")

@@ -1,4 +1,3 @@
-#!/usr/bin/python
 import random
 
 
@@ -40,4 +39,3 @@ def makeTerrainData(n_points=1000):
             , "slow":{"grade":grade_bkg, "bumpiness":bumpy_bkg}}
 
     return X_train, y_train, X_test, y_test
-
