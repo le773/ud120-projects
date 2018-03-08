@@ -1,0 +1,13 @@
+*.pyc
+codeone/enron_mail_20110402.tgz
+codeone/enron_mail_20110402/
+codeone/enron_mail_20150507.tgz
+codeone/enron_mail_20150507.tar.gz
+codeone/maildir/
+codeone/text_learning/your_word_data.pkl
+codeone/text_learning/your_email_authors.pkl
+codeone/my_classifier.pkl
+codeone/my_dataset.pkl
+codeone/my_feature_list.pkl
+codeone/final_project/
+enron_mail_20150507.tar.gz
