@@ -1,14 +1,15 @@
 import pickle
 import cPickle
 import numpy
+import os
 
 from sklearn import cross_validation
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_selection import SelectPercentile, f_classif
 
 
-
-def preprocess(words_file = "../tools/word_data.pkl", authors_file="../tools/email_authors.pkl"):
+# (os.getcwd() + "\\codeone\\tools")
+def preprocess(words_file = os.getcwd() + "\\codeone\\tools\\" + "word_data.pkl", authors_file=os.getcwd() + "\\codeone\\tools\\" + "email_authors.pkl"):
     """
         this function takes a pre-made list of email texts (by default word_data.pkl)
         and the corresponding authors (by default email_authors.pkl) and performs
