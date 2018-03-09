@@ -1,5 +1,3 @@
-
-
 """
     This is the code to accompany the Lesson 1 (Naive Bayes) mini-project.
 
@@ -12,7 +10,8 @@
 
 import sys
 from time import time
-sys.path.append("../tools/")
+import os
+sys.path.append(os.getcwd() + "\\codeone\\tools")
 from email_preprocess import preprocess
 
 from sklearn.naive_bayes import GaussianNB
