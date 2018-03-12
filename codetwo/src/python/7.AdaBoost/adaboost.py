@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf8
 
 '''
@@ -9,6 +8,7 @@ Adaboost is short for Adaptive Boosting
 《机器学习实战》更新地址：https://github.com/apachecn/MachineLearning
 '''
 from numpy import *
+import os
 
 
 def loadSimpData():
@@ -297,7 +297,7 @@ if __name__ == "__main__":
 
     # 马疝病数据集
     # 训练集合
-    dataArr, labelArr = loadDataSet("input/7.AdaBoost/horseColicTraining2.txt")
+    dataArr, labelArr = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/7.AdaBoost/horseColicTraining2.txt")
     weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, labelArr, 40)
     print weakClassArr, '\n-----\n', aggClassEst.T
     # 计算ROC下面的AUC的面积大小
