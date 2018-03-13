@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf8
 
 '''
@@ -13,6 +12,7 @@ Flying_sfeng博客地址：http://blog.csdn.net/flying_sfeng/article/details/641
 在此表示感谢你的代码和注解， 我重新也完善了个人注解
 '''
 from random import seed, randrange, random
+import os
 
 
 # 导入csv文件
@@ -54,7 +54,7 @@ def cross_validation_split(dataset, n_folds):
     for i in range(n_folds):
         fold = list()                  # 每次循环 fold 清零，防止重复导入 dataset_split
         while len(fold) < fold_size:   # 这里不能用 if，if 只是在第一次判断时起作用，while 执行循环，直到条件不成立
-            # 有放回的随机采样，有一些样本被重复采样，从而在训练集中多次出现，有的则从未在训练集中出现，此则自助采样法。从而保证每棵决策树训练集的差异性            
+            # 有放回的随机采样，有一些样本被重复采样，从而在训练集中多次出现，有的则从未在训练集中出现，此则自助采样法。从而保证每棵决策树训练集的差异性
             index = randrange(len(dataset_copy))
             # 将对应索引 index 的内容从 dataset_copy 中导出，并将该内容从 dataset_copy 中删除。
             # pop() 函数用于移除列表中的一个元素（默认最后一个元素），并且返回该元素的值。
@@ -85,7 +85,7 @@ Gini(D|切割) = Gini(D1) + Gini(D2)
 # Calculate the Gini index for a split dataset
 def gini_index(groups, class_values):    # 个人理解：计算代价，分类越准确，则 gini 越小
     gini = 0.0
-    for class_value in class_values:     # class_values = [0, 1] 
+    for class_value in class_values:     # class_values = [0, 1]
         for group in groups:             # groups = (left, right)
             size = len(group)
             if size == 0:
@@ -132,7 +132,7 @@ def get_split(dataset, n_features):
 # Create a terminal node value # 输出group中出现次数较多的标签
 def to_terminal(group):
     outcomes = [row[-1] for row in group]           # max() 函数中，当 key 参数不为空时，就以 key 的函数对象为判断的标准
-    return max(set(outcomes), key=outcomes.count)   # 输出 group 中出现次数较多的标签  
+    return max(set(outcomes), key=outcomes.count)   # 输出 group 中出现次数较多的标签
 
 
 # Create child splits for a node or make terminal  # 创建子分割器，递归分类，直到分类结束
@@ -325,7 +325,7 @@ def evaluate_algorithm(dataset, algorithm, n_folds, *args):
 if __name__ == '__main__':
 
     # 加载数据
-    dataset = loadDataSet('input/7.RandomForest/sonar-all-data.txt')
+    dataset = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/7.RandomForest/sonar-all-data.txt')
     # print dataset
 
     n_folds = 5        # 分成5份数据，进行交叉验证

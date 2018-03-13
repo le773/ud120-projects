@@ -1,4 +1,4 @@
-#!/usr/bin/python
+
 # coding:utf8
 '''
 Created on Jan 8, 2011
@@ -9,6 +9,7 @@ GitHub: https://github.com/apachecn/MachineLearning
 
 from numpy import *
 import matplotlib.pylab as plt
+import os
 
 
 def loadDataSet(fileName):
@@ -18,7 +19,7 @@ def loadDataSet(fileName):
         dataMat ：  feature 对应的数据集
         labelMat ： feature 对应的分类标签，即类别标签
     """
-    # 获取样本特征的总数，不算最后的目标变量 
+    # 获取样本特征的总数，不算最后的目标变量
     numFeat = len(open(fileName).readline().split('\t')) - 1
     dataMat = []
     labelMat = []
@@ -28,9 +29,9 @@ def loadDataSet(fileName):
         lineArr = []
         # 删除一行中以tab分隔的数据前后的空白符号
         curLine = line.strip().split('\t')
-        # i 从0到2，不包括2 
+        # i 从0到2，不包括2
         for i in range(numFeat):
-            # 将数据添加到lineArr List中，每一行数据测试数据组成一个行向量           
+            # 将数据添加到lineArr List中，每一行数据测试数据组成一个行向量
             lineArr.append(float(curLine[i]))
             # 将测试数据的输入数据部分存储到dataMat 的List中
         dataMat.append(lineArr)
@@ -56,7 +57,7 @@ def standRegres(xArr, yArr):
     # 矩阵乘法的条件是左矩阵的列数等于右矩阵的行数
     xTx = xMat.T * xMat
     # 因为要用到xTx的逆矩阵，所以事先需要确定计算得到的xTx是否可逆，条件是矩阵的行列式不为0
-    # linalg.det() 函数是用来求得矩阵的行列式的，如果矩阵的行列式为0，则这个矩阵是不可逆的，就无法进行接下来的运算                   
+    # linalg.det() 函数是用来求得矩阵的行列式的，如果矩阵的行列式为0，则这个矩阵是不可逆的，就无法进行接下来的运算
     if linalg.det(xTx) == 0.0:
         print("This matrix is singular, cannot do inverse")
         return
@@ -91,7 +92,7 @@ def lwlr(testPoint, xArr, yArr, k=1.0):
     yMat = mat(yArr).T
     # 获得xMat矩阵的行数
     m = shape(xMat)[0]
-    # eye()返回一个对角线元素为1，其他元素为0的二维数组，创建权重矩阵weights，该矩阵为每个样本点初始化了一个权重                   
+    # eye()返回一个对角线元素为1，其他元素为0的二维数组，创建权重矩阵weights，该矩阵为每个样本点初始化了一个权重
     weights = mat(eye((m)))
     for j in range(m):
         # testPoint 的形式是 一个行向量的形式
@@ -125,7 +126,7 @@ def lwlrTest(testArr, xArr, yArr, k=1.0):
     m = shape(testArr)[0]
     # 构建一个全部都是 0 的 1 * m 的矩阵
     yHat = zeros(m)
-    # 循环所有的数据点，并将lwlr运用于所有的数据点 
+    # 循环所有的数据点，并将lwlr运用于所有的数据点
     for i in range(m):
         yHat[i] = lwlr(testArr[i], xArr, yArr, k)
     # 返回估计值
@@ -223,7 +224,7 @@ def ridgeTest(xArr, yArr):
     # 创建30 * m 的全部数据为0 的矩阵
     wMat = zeros((numTestPts, shape(xMat)[1]))
     for i in range(numTestPts):
-        # exp() 返回 e^x 
+        # exp() 返回 e^x
         ws = ridgeRegres(xMat, yMat, exp(i - 10))
         wMat[i, :] = ws.T
     return wMat
@@ -298,7 +299,7 @@ def stageWise(xArr, yArr, eps=0.01, numIt=100):
     # 故改为了下边的样子，但是需要安装一个 beautifulSoup 这个第三方爬虫库，安装很简单，见下边
 
 
-'''  
+'''
 from time import sleep
 import json
 import urllib2
@@ -322,7 +323,7 @@ def searchForSet(retX, retY, setNum, yr, numPce, origPrc):
                     retX.append([yr, numPce, newFlag, origPrc])
                     retY.append(sellingPrice)
         except: print ('problem with item %d' % i)
-    
+
 def setDataCollect(retX, retY):
     searchForSet(retX, retY, 8288, 2006, 800, 49.99)
     searchForSet(retX, retY, 10030, 2002, 3096, 269.99)
@@ -330,9 +331,9 @@ def setDataCollect(retX, retY):
     searchForSet(retX, retY, 10181, 2007, 3428, 199.99)
     searchForSet(retX, retY, 10189, 2008, 5922, 299.99)
     searchForSet(retX, retY, 10196, 2009, 3263, 249.99)
-    
+
 def crossValidation(xArr,yArr,numVal=10):
-    m = len(yArr)                           
+    m = len(yArr)
     indexList = range(m)
     errorMat = zeros((numVal,30))#create error mat 30columns numVal rows创建error mat 30columns numVal 行
     for i in range(numVal):
@@ -341,7 +342,7 @@ def crossValidation(xArr,yArr,numVal=10):
         random.shuffle(indexList)
         for j in range(m):#create training set based on first 90% of values in indexList
                           #基于indexList中的前90%的值创建训练集
-            if j < m*0.9: 
+            if j < m*0.9:
                 trainX.append(xArr[indexList[j]])
 gt56                trainY.append(yArr[indexList[j]])
             else:
@@ -372,11 +373,11 @@ gt56                trainY.append(yArr[indexList[j]])
 # ----------------------------------------------------------------------------
 # 预测乐高玩具套装的价格 可运行版本，我们把乐高数据存储到了我们的 input 文件夹下，使用 beautifulSoup 爬去一下内容
 # 前提：安装 BeautifulSoup 第三方爬虫库，步骤如下
-# 在这个页面 https://www.crummy.com/software/BeautifulSoup/bs4/download/4.4/ 下载，beautifulsoup4-4.4.1.tar.gz 
+# 在这个页面 https://www.crummy.com/software/BeautifulSoup/bs4/download/4.4/ 下载，beautifulsoup4-4.4.1.tar.gz
 # 将下载文件解压，使用 windows 版本的 cmd 命令行，进入解压的包，输入以下两行命令即可完成安装
-# python setup.py build 
+# python setup.py build
 # python setup.py install
-#  
+#
 '''
 from numpy import *
 from bs4 import BeautifulSoup
@@ -424,7 +425,7 @@ def scrapePage(retX, retY, inFile, yr, numPce, origPrc):
         i += 1
         currentRow = soup.findAll('table', r="%d" % i)
 
-# 依次读取六种乐高套装的数据，并生成数据矩阵        
+# 依次读取六种乐高套装的数据，并生成数据矩阵
 def setDataCollect(retX, retY):
     scrapePage(retX, retY, 'input/8.Regression/setHtml/lego8288.html', 2006, 800, 49.99)
     scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10030.html', 2002, 3096, 269.99)
@@ -452,7 +453,7 @@ def crossValidation(xArr,yArr,numVal=10):
 
         # 切分训练集和测试集
         for j in range(m):
-            if j < m*0.9: 
+            if j < m*0.9:
                 trainX.append(xArr[indexList[j]])
                 trainY.append(yArr[indexList[j]])
             else:
@@ -465,7 +466,8 @@ def crossValidation(xArr,yArr,numVal=10):
         # 循环遍历矩阵中的30组回归系数
         for k in range(30):
             # 读取训练集和数据集
-            matTestX = mat(testX); matTrainX=mat(trainX)
+            matTestX = mat(testX);
+            matTrainX=mat(trainX)
             # 对数据进行标准化
             meanTrain = mean(matTrainX,0)
             varTrain = var(matTrainX,0)
@@ -495,7 +497,7 @@ def crossValidation(xArr,yArr,numVal=10):
 
 #test for standRegression
 def regression1():
-    xArr, yArr = loadDataSet("input/8.Regression/data.txt")
+    xArr, yArr = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/8.Regression/data.txt")
     xMat = mat(xArr)
     yMat = mat(yArr)
     ws = standRegres(xArr, yArr)
@@ -514,7 +516,7 @@ def regression1():
 
     #test for LWLR
 def regression2():
-    xArr, yArr = loadDataSet("input/8.Regression/data.txt")
+    xArr, yArr = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/8.Regression/data.txt")
     yHat = lwlrTest(xArr, xArr, yArr, 0.003)
     xMat = mat(xArr)
     srtInd = xMat[:, 1].argsort(
@@ -541,7 +543,7 @@ def abaloneTest():
         None
     '''
     # 加载数据
-    abX, abY = loadDataSet("input/8.Regression/abalone.txt")
+    abX, abY = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/8.Regression/abalone.txt")
     # 使用不同的核进行预测
     oldyHat01 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 0.1)
     oldyHat1 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 1)
@@ -567,7 +569,7 @@ def abaloneTest():
 
 #test for ridgeRegression
 def regression3():
-    abX, abY = loadDataSet("input/8.Regression/abalone.txt")
+    abX, abY = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/8.Regression/abalone.txt")
     ridgeWeights = ridgeTest(abX, abY)
     fig = plt.figure()
     ax = fig.add_subplot(111)
@@ -577,7 +579,7 @@ def regression3():
 
 #test for stageWise
 def regression4():
-    xArr, yArr = loadDataSet("input/8.Regression/abalone.txt")
+    xArr, yArr = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/8.Regression/abalone.txt")
     stageWise(xArr, yArr, 0.01, 200)
     xMat = mat(xArr)
     yMat = mat(yArr).T

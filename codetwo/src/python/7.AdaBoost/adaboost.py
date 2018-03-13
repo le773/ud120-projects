@@ -109,6 +109,9 @@ def buildStump(dataArr, labelArr, D):
                 # 计算 平均每个特征的概率0.2*错误概率的总和为多少，就知道错误率多高
                 # 例如： 一个都没错，那么错误率= 0.2*0=0 ， 5个都错，那么错误率= 0.2*5=1， 只错3个，那么错误率= 0.2*3=0.6
                 weightedError = D.T*errArr
+                # print 'i=:', i, ' j=:', j, ' inequal=:',inequal
+                # print 'D:'
+                # print D.T
                 '''
                 dim            表示 feature列
                 threshVal      表示树的分界值
@@ -299,13 +302,20 @@ if __name__ == "__main__":
     # 训练集合
     dataArr, labelArr = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/7.AdaBoost/horseColicTraining2.txt")
     weakClassArr, aggClassEst = adaBoostTrainDS(dataArr, labelArr, 40)
-    print weakClassArr, '\n-----\n', aggClassEst.T
+    # print weakClassArr, '\n-----\n', aggClassEst.T
     # 计算ROC下面的AUC的面积大小
     plotROC(aggClassEst.T, labelArr)
     # 测试集合
-    dataArrTest, labelArrTest = loadDataSet("input/7.AdaBoost/horseColicTest2.txt")
+    dataArrTest, labelArrTest = loadDataSet(os.getcwd() + "\\codetwo\\" + "input/7.AdaBoost/horseColicTest2.txt")
     m = shape(dataArrTest)[0]
     predicting10 = adaClassify(dataArrTest, weakClassArr)
     errArr = mat(ones((m, 1)))
     # 测试：计算总样本数，错误样本数，错误率
-    print m, errArr[predicting10 != mat(labelArrTest).T].sum(), errArr[predicting10 != mat(labelArrTest).T].sum()/m
+    # print m, errArr[predicting10 != mat(labelArrTest).T].sum(), errArr[predicting10 != mat(labelArrTest).T].sum()/m
+    # print "weakClassArr len:", len(weakClassArr)
+    # for i in range(len(weakClassArr)):
+    #     print weakClassArr[i]
+    # l2 = weakClassArr.sort(key=weakClassArr['dim'])
+    # print l2
+    l3 = sorted(weakClassArr.items(), lambda x, y: cmp(x[1], y[1]))
+    print l3
