@@ -98,7 +98,7 @@ def lwlr(testPoint, xArr, yArr, k=1.0):
         # testPoint 的形式是 一个行向量的形式
         # 计算 testPoint 与输入样本点之间的距离，然后下面计算出每个样本贡献误差的权值
         diffMat = testPoint - xMat[j, :]
-        # k控制衰减的速度
+        # diffMat是矩阵，k控制衰减的速度
         weights[j, j] = exp(diffMat * diffMat.T / (-2.0 * k**2))
     # 根据矩阵乘法计算 xTx ，其中的 weights 矩阵是样本点对应的权重矩阵
     xTx = xMat.T * (weights * xMat)
@@ -227,6 +227,8 @@ def ridgeTest(xArr, yArr):
         # exp() 返回 e^x
         ws = ridgeRegres(xMat, yMat, exp(i - 10))
         wMat[i, :] = ws.T
+        print '---------------------------'
+        print ws.T
     return wMat
 
 
@@ -237,7 +239,8 @@ def regularize(xMat):  # 按列进行规范化
     inMat = (inMat - inMeans) / inVar
     return inMat
 
-
+# eps 每次迭代需要调整的步长
+# numIt 迭代次数s
 def stageWise(xArr, yArr, eps=0.01, numIt=100):
     xMat = mat(xArr)
     yMat = mat(yArr).T
@@ -251,7 +254,7 @@ def stageWise(xArr, yArr, eps=0.01, numIt=100):
     wsMax = ws.copy()
     for i in range(numIt):
         print(ws.T)
-        lowestError = inf
+        lowestError = inf # lowestError 当前最小误差
         for j in range(n):
             for sign in [-1, 1]:
                 wsTest = ws.copy()
@@ -344,7 +347,7 @@ def crossValidation(xArr,yArr,numVal=10):
                           #基于indexList中的前90%的值创建训练集
             if j < m*0.9:
                 trainX.append(xArr[indexList[j]])
-gt56                trainY.append(yArr[indexList[j]])
+            trainY.append(yArr[indexList[j]])
             else:
                 testX.append(xArr[indexList[j]])
                 testY.append(yArr[indexList[j]])
@@ -378,8 +381,8 @@ gt56                trainY.append(yArr[indexList[j]])
 # python setup.py build
 # python setup.py install
 #
-'''
-from numpy import *
+
+# from numpy import *
 from bs4 import BeautifulSoup
 
 # 从页面读取数据，生成retX和retY列表
@@ -387,7 +390,7 @@ def scrapePage(retX, retY, inFile, yr, numPce, origPrc):
 
     # 打开并读取HTML文件
     fr = open(inFile)
-    soup = BeautifulSoup(fr.read())
+    soup = BeautifulSoup(fr.read().decode('utf-8'), 'html.parser')
     i=1
 
     # 根据HTML页面结构进行解析
@@ -427,12 +430,12 @@ def scrapePage(retX, retY, inFile, yr, numPce, origPrc):
 
 # 依次读取六种乐高套装的数据，并生成数据矩阵
 def setDataCollect(retX, retY):
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego8288.html', 2006, 800, 49.99)
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10030.html', 2002, 3096, 269.99)
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10179.html', 2007, 5195, 499.99)
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10181.html', 2007, 3428, 199.99)
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10189.html', 2008, 5922, 299.99)
-    scrapePage(retX, retY, 'input/8.Regression/setHtml/lego10196.html', 2009, 3263, 249.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego8288.html', 2006, 800, 49.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego10030.html', 2002, 3096, 269.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego10179.html', 2007, 5195, 499.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego10181.html', 2007, 3428, 199.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego10189.html', 2008, 5922, 299.99)
+    scrapePage(retX, retY, os.getcwd() + "\\codetwo\\" + 'input/8.Regression/setHtml/lego10196.html', 2009, 3263, 249.99)
 
 
 # 交叉验证测试岭回归
@@ -492,7 +495,7 @@ def crossValidation(xArr,yArr,numVal=10):
     # 输出构建的模型
     print "the best model from Ridge Regression is:\n",unReg
     print "with constant term: ",-1*sum(multiply(meanX,unReg)) + mean(yMat)
-'''
+
 
 
 #test for standRegression
@@ -599,10 +602,11 @@ def regression5():
     crossValidation(lgX, lgY, 10)
 
 
+
 if __name__ == "__main__":
-    regression1()
+    # regression1()
     # regression2()
     # abaloneTest()
     # regression3()
     # regression4()
-    # regression5()
+    regression5()
