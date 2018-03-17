@@ -3,10 +3,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.cluster import KMeans
+import os
 
 # 加载数据集
 dataMat = []
-fr = open("input/10.KMeans/testSet.txt") # 注意，这个是相对路径，请保证是在 MachineLearning 这个目录下执行。
+fr = open(os.getcwd() + "\\codetwo\\" + "input/10.KMeans/testSet.txt") # 注意，这个是相对路径，请保证是在 MachineLearning 这个目录下执行。
 for line in fr.readlines():
     curLine = line.strip().split('\t')
     fltLine = map(float,curLine)    # 映射所有的元素为 float（浮点数）类型
@@ -18,6 +19,7 @@ km.fit(dataMat) # 拟合
 km_pred = km.predict(dataMat) # 预测
 centers = km.cluster_centers_ # 质心
 
+print 'km_pred:', km_pred
 # 可视化结果
 plt.scatter(np.array(dataMat)[:, 1], np.array(dataMat)[:, 0], c=km_pred)
 plt.scatter(centers[:, 1], centers[:, 0], c="r")
