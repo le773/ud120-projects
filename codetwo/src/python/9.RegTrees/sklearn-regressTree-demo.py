@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf8
 
 """
@@ -21,7 +20,7 @@ import matplotlib.pyplot as plt
 rng = np.random.RandomState(1)
 # print 'lalalalala===', rng
 # rand() 是给定形状的随机值，rng.rand(80, 1)即矩阵的形状是 80行，1列
-# sort() 
+# sort()
 X = np.sort(5 * rng.rand(80, 1), axis=0)
 # print 'X=', X
 y = np.sin(X).ravel()

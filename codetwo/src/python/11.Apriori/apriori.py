@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf8
 
 '''
@@ -10,7 +9,7 @@ Ch 11 code
 '''
 print(__doc__)
 from numpy import *
-
+import os
 # 加载数据集
 def loadDataSet():
     return [[1, 3, 4], [2, 3, 5], [1, 2, 3, 5], [2, 5]]
@@ -32,10 +31,10 @@ def createC1(dataSet):
                 # 遍历所有的元素，如果不在 C1 出现过，那么就 append
                 C1.append([item])
     # 对数组进行 `从小到大` 的排序
-    # print 'sort 前=', C1
+    print 'sort 前=', C1
     C1.sort()
     # frozenset 表示冻结的 set 集合，元素无改变；可以把它当字典的 key 来使用
-    # print 'sort 后=', C1
+    print 'sort 后=', C1
     # print 'frozenset=', map(frozenset, C1)
     return map(frozenset, C1)
 
@@ -51,7 +50,8 @@ def scanD(D, Ck, minSupport):
         retList 支持度大于 minSupport 的集合
         supportData 候选项集支持度数据
     """
-
+    # D = [set([1, 3, 4]), set([2, 3, 5]), set([1, 2, 3, 5]), set([2, 5])]
+    # C1:  [frozenset([1]), frozenset([2]), frozenset([3]), frozenset([4]), frozenset([5])]
     # ssCnt 临时存放选数据集 Ck 的频率. 例如: a->10, b->5, c->8
     ssCnt = {}
     for tid in D:
@@ -62,6 +62,7 @@ def scanD(D, Ck, minSupport):
                     ssCnt[can] = 1
                 else:
                     ssCnt[can] += 1
+    print 'ssCnt:',ssCnt
     numItems = float(len(D)) # 数据集 D 的数量
     retList = []
     supportData = {}
@@ -73,6 +74,8 @@ def scanD(D, Ck, minSupport):
             retList.insert(0, key)
         # 存储所有的候选项（key）和对应的支持度（support）
         supportData[key] = support
+    print 'retList:', retList
+    print 'supportData:', supportData
     return retList, supportData
 
 # 输入频繁项集列表 Lk 与返回的元素个数 k，然后输出所有可能的候选项集 Ck
@@ -88,15 +91,15 @@ def aprioriGen(Lk, k):
     Returns:
         retList 元素两两合并的数据集
     """
-    
+
     retList = []
     lenLk = len(Lk)
     for i in range(lenLk):
         for j in range(i+1, lenLk):
             L1 = list(Lk[i])[: k-2]
             L2 = list(Lk[j])[: k-2]
-            # print '-----i=', i, k-2, Lk, Lk[i], list(Lk[i])[: k-2]
-            # print '-----j=', j, k-2, Lk, Lk[j], list(Lk[j])[: k-2]
+            print '-----i=', i, k-2, Lk, Lk[i], list(Lk[i])[: k-2]
+            print '-----j=', j, k-2, Lk, Lk[j], list(Lk[j])[: k-2]
             L1.sort()
             L2.sort()
             # 第一次 L1,L2 为空，元素直接进行合并，返回元素两两合并的数据集
@@ -120,18 +123,21 @@ def apriori(dataSet, minSupport=0.5):
     """
     # C1 即对 dataSet 进行去重，排序，放入 list 中，然后转换所有的元素为 frozenset
     C1 = createC1(dataSet)
-    # print 'C1: ', C1
+    print 'C1: ', C1
     # 对每一行进行 set 转换，然后存放到集合中
     D = map(set, dataSet)
-    # print 'D=', D
+    print 'D =', D
     # 计算候选数据集 C1 在数据集 D 中的支持度，并返回支持度大于 minSupport 的数据
     L1, supportData = scanD(D, C1, minSupport)
     # print "L1=", L1, "\n", "outcome: ", supportData
 
     # L 加了一层 list, L 一共 2 层 list
     L = [L1]
+    print 'L:',L
     k = 2
-    # 判断 L 的第 k-2 项的数据长度是否 > 0。第一次执行时 L 为 [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]]。L[k-2]=L[0]=[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]，最后面 k += 1
+    # 判断 L 的第 k-2 项的数据长度是否 > 0。
+    # 第一次执行时 L 为 [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]]。L[k-2]=L[0]=[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])]，
+    # 最后面 k += 1
     while (len(L[k-2]) > 0):
         # print 'k=', k, L, L[k-2]
         Ck = aprioriGen(L[k-2], k) # 例如: 以 {0},{1},{2} 为输入且 k = 2 则输出 {0,1}, {0,2}, {1,2}. 以 {0,1},{0,2},{1,2} 为输入且 k = 3 则输出 {0,1,2}
@@ -142,7 +148,7 @@ def apriori(dataSet, minSupport=0.5):
         supportData.update(supK)
         if len(Lk) == 0:
             break
-        # Lk 表示满足频繁子项的集合，L 元素在增加，例如: 
+        # Lk 表示满足频繁子项的集合，L 元素在增加，例如:
         # l=[[set(1), set(2), set(3)]]
         # l=[[set(1), set(2), set(3)], [set(1, 2), set(2, 3)]]
         L.append(Lk)
@@ -155,7 +161,7 @@ def calcConf(freqSet, H, supportData, brl, minConf=0.7):
     """calcConf（对两个元素的频繁项，计算可信度，例如： {1,2}/{1} 或者 {1,2}/{2} 看是否满足条件）
 
     Args:
-        freqSet 频繁项集中的元素，例如: frozenset([1, 3])    
+        freqSet 频繁项集中的元素，例如: frozenset([1, 3])
         H 频繁项集中的元素的集合，例如: [frozenset([1]), frozenset([3])]
         supportData 所有元素的支持度的字典
         brl 关联规则列表的空数组
@@ -181,7 +187,7 @@ def rulesFromConseq(freqSet, H, supportData, brl, minConf=0.7):
     """rulesFromConseq
 
     Args:
-        freqSet 频繁项集中的元素，例如: frozenset([2, 3, 5])    
+        freqSet 频繁项集中的元素，例如: frozenset([2, 3, 5])
         H 频繁项集中的元素的集合，例如: [frozenset([2]), frozenset([3]), frozenset([5])]
         supportData 所有元素的支持度的字典
         brl 关联规则列表的数组
@@ -243,7 +249,7 @@ def getActionIds():
     votesmart.apikey = 'a7fa40adec6f4a77178799fae4441030'
     actionIdList = []
     billTitleList = []
-    fr = open('input/11.Apriori/recent20bills.txt')
+    fr = open(os.getcwd() + "\\codetwo\\" + 'input/11.Apriori/recent20bills.txt')
     for line in fr.readlines():
         billNum = int(line.split('\t')[0])
         try:
@@ -354,7 +360,7 @@ def main():
     # # 项目案例
     # # 发现毒蘑菇的相似特性
     # # 得到全集的数据
-    # dataSet = [line.split() for line in open("input/11.Apriori/mushroom.dat").readlines()]
+    # dataSet = [line.split() for line in open(os.getcwd() + "\\codetwo\\" + "input/11.Apriori/mushroom.dat").readlines()]
     # L, supportData = apriori(dataSet, minSupport=0.3)
     # # 2表示毒蘑菇，1表示可食用的蘑菇
     # # 找出关于2的频繁子项出来，就知道如果是毒蘑菇，那么出现频繁的也可能是毒蘑菇
