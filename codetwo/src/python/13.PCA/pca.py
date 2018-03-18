@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding: utf-8
 
 '''
@@ -9,6 +8,7 @@ GitHub：https://github.com/apachecn/MachineLearning
 '''
 from numpy import *
 import matplotlib.pyplot as plt
+import os
 print(__doc__)
 
 
@@ -52,7 +52,7 @@ def pca(dataMat, topNfeat=9999999):
 
     # eigVals为特征值， eigVects为特征向量
     eigVals, eigVects = linalg.eig(mat(covMat))
-    # print 'eigVals=', eigVals
+    print 'eigVals=', eigVals
     # print 'eigVects=', eigVects
     # 对特征值，进行从小到大的排序，返回从小到大的index序号
     # 特征值的逆序就可以得到topNfeat个最大的特征向量
@@ -68,26 +68,28 @@ def pca(dataMat, topNfeat=9999999):
     >>> y[:-6:-1]
     array([0, 2, 1])
     '''
+    # 特征值排序索引，从小到大
     eigValInd = argsort(eigVals)
-    # print 'eigValInd1=', eigValInd
+    print 'eigValInd1=', eigValInd
 
     # -1表示倒序，返回topN的特征值[-1 到 -(topNfeat+1) 但是不包括-(topNfeat+1)本身的倒叙]
+    # 特征索引
     eigValInd = eigValInd[:-(topNfeat+1):-1]
-    # print 'eigValInd2=', eigValInd
+    print 'eigValInd2=', eigValInd
     # 重组 eigVects 最大到最小
     redEigVects = eigVects[:, eigValInd]
-    # print 'redEigVects=', redEigVects.T
+    print 'redEigVects=', redEigVects.T
     # 将数据转换到新空间
     # print "---", shape(meanRemoved), shape(redEigVects)
     lowDDataMat = meanRemoved * redEigVects
     reconMat = (lowDDataMat * redEigVects.T) + meanVals
-    # print 'lowDDataMat=', lowDDataMat
-    # print 'reconMat=', reconMat
+    print 'lowDDataMat=', lowDDataMat
+    print 'reconMat=', reconMat
     return lowDDataMat, reconMat
 
 
 def replaceNanWithMean():
-    datMat = loadDataSet('input/13.PCA/secom.data', ' ')
+    datMat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/13.PCA/secom.data', ' ')
     numFeat = shape(datMat)[1]
     for i in range(numFeat):
         # 对value不为NaN的求均值
@@ -133,20 +135,20 @@ def analyse_data(dataMat):
 
 
 if __name__ == "__main__":
-    # # 加载数据，并转化数据类型为float
-    # dataMat = loadDataSet('input/13.PCA/testSet.txt')
-    # # 只需要1个特征向量
-    # lowDmat, reconMat = pca(dataMat, 1)
-    # # 只需要2个特征向量，和原始数据一致，没任何变化
-    # # lowDmat, reconMat = pca(dataMat, 2)
-    # # print shape(lowDmat)
-    # show_picture(dataMat, reconMat)
+    # 加载数据，并转化数据类型为float
+    dataMat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/13.PCA/testSet.txt')
+    # 只需要1个特征向量
+    lowDmat, reconMat = pca(dataMat, 1)
+    # 只需要2个特征向量，和原始数据一致，没任何变化
+    # lowDmat, reconMat = pca(dataMat, 2)
+    # print shape(lowDmat)
+    show_picture(dataMat, reconMat)
 
     # 利用PCA对半导体制造数据降维
     dataMat = replaceNanWithMean()
     print shape(dataMat)
     # 分析数据
     analyse_data(dataMat)
-    # lowDmat, reconMat = pca(dataMat, 20)
-    # print shape(lowDmat)
-    # show_picture(dataMat, reconMat)
+    lowDmat, reconMat = pca(dataMat, 20)
+    print shape(lowDmat)
+    show_picture(dataMat, reconMat)
