@@ -175,16 +175,23 @@ def calcConf(freqSet, H, supportData, brl, minConf=0.7):
     """
     # 记录可信度大于最小可信度（minConf）的集合
     prunedH = []
-    for conseq in H: # 假设 freqSet = frozenset([1, 3]), H = [frozenset([1]), frozenset([3])]，那么现在需要求出 frozenset([1]) -> frozenset([3]) 的可信度和 frozenset([3]) -> frozenset([1]) 的可信度
-
+	# 假设 freqSet = frozenset([1, 3]), H = [frozenset([1]), frozenset([3])]，
+	# 那么现在需要求出 frozenset([1]) -> frozenset([3]) 的可信度和 frozenset([3]) -> frozenset([1]) 的可信度
+    for conseq in H:
         print 'confData=', freqSet, H, conseq, freqSet-conseq
-        conf = supportData[freqSet]/supportData[freqSet-conseq] # 支持度定义: a -> b = support(a | b) / support(a). 假设  freqSet = frozenset([1, 3]), conseq = [frozenset([1])]，那么 frozenset([1]) 至 frozenset([3]) 的可信度为 = support(a | b) / support(a) = supportData[freqSet]/supportData[freqSet-conseq] = supportData[frozenset([1, 3])] / supportData[frozenset([1])]
+        conf = supportData[freqSet]/supportData[freqSet-conseq]
+		# 支持度定义: a -> b = support(a | b) / support(a).
+		# 假设  freqSet = frozenset([1, 3]), conseq = [frozenset([1])]，
+		# 那么 frozenset([1]) 至 frozenset([3]) 的可信度为 = support(a | b) / support(a)
+		# = supportData[freqSet]/supportData[freqSet-conseq]
+        # = supportData[frozenset([1, 3])] / supportData[frozenset([1])]
         if conf >= minConf:
             # 只要买了 freqSet-conseq 集合，一定会买 conseq 集合（freqSet-conseq 集合和 conseq集合 是全集）
             print freqSet-conseq, '-->', conseq, 'conf:', conf
             brl.append((freqSet-conseq, conseq, conf))
             prunedH.append(conseq)
     print "prunedH:>",prunedH
+	# prunedH中的item元素通过aprioriGen生成len(item)+1的子集D2，再次从freqSet发掘D2存在的关联
     return prunedH
 
 # 递归计算频繁项集的规则
@@ -235,8 +242,9 @@ def generateRules(L, supportData, minConf=0.7):
     """
     print 'L 频繁项集列表:',L
     bigRuleList = []
-    # 假设 L = [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])], [frozenset([1, 3]),
-    # frozenset([2, 5]), frozenset([2, 3]), frozenset([3, 5])], [frozenset([2, 3, 5])]]
+    # 假设 L = [[frozenset([1]), frozenset([3]), frozenset([2]), frozenset([5])],
+	# [frozenset([1, 3]), frozenset([2, 5]), frozenset([2, 3]), frozenset([3, 5])],
+    # [frozenset([2, 3, 5])]]
     for i in range(1, len(L)):
         # 获取频繁项集中每个组合的所有元素
         print "i=>",i, L[i]
@@ -246,7 +254,12 @@ def generateRules(L, supportData, minConf=0.7):
             H1 = [frozenset([item]) for item in freqSet]
             # 2 个的组合，走 else, 2 个以上的组合，走 if
             if (i > 1):
+			# freqSet = L[>=2][0] = [frozenset([2, 3, 5])],
+			# H1是freqSet的元素集合 [frozenset([2]), frozenset([3]), frozenset([5])]
+			# 此时需要生成规则：freqSet 和 H1.length+1元素的关系
                 rulesFromConseq(freqSet, H1, supportData, bigRuleList, minConf)
+			# 当第一次生成关联规则时：freqSet=L[1][0]=frozenset([1, 3])
+			# H1是freqSet的元素集合[frozenset([1]), frozenset([3])]
             else:
                 print 'calcConf: freqSet>', freqSet, 'H1>', H1
                 calcConf(freqSet, H1, supportData, bigRuleList, minConf)

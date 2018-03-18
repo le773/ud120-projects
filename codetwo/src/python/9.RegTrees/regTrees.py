@@ -1,4 +1,3 @@
-#!/usr/bin/python
 # coding:utf8
 '''
 Created on Feb 4, 2011
@@ -9,7 +8,7 @@ GitHub: https://github.com/apachecn/MachineLearning
 '''
 print(__doc__)
 from numpy import *
-
+import os
 
 # 默认解析的数据是用tab分隔，并且是数值类型
 # general function to parse tab -delimited floats
@@ -48,8 +47,8 @@ def binSplitDataSet(dataSet, feature, value):
         mat1 大于 value 的数据集在右边
     Raises:
     """
-    # # 测试案例
-    # print 'dataSet[:, feature]=', dataSet[:, feature]
+    # 测试案例
+    print 'dataSet[:, feature]=', dataSet[:, feature]
     # print 'nonzero(dataSet[:, feature] > value)[0]=', nonzero(dataSet[:, feature] > value)[0]
     # print 'nonzero(dataSet[:, feature] <= value)[0]=', nonzero(dataSet[:, feature] <= value)[0]
 
@@ -109,6 +108,7 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     S = errType(dataSet)
     # inf 正无穷大
     bestS, bestIndex, bestValue = inf, 0, 0
+    # 按照每一个特征的所有取值都二分一次，求最小的无分类误差的总方差和
     # 循环处理每一列对应的feature值
     for featIndex in range(n-1): # 对于每个特征
         # [0]表示这一列的[所有行]，不要[0]就是一个array[[所有行]]，下面的一行表示的是将某一列全部的数据转换为行，然后设置为list形式
@@ -131,7 +131,7 @@ def chooseBestSplit(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
         return None, leafType(dataSet)
     mat0, mat1 = binSplitDataSet(dataSet, bestIndex, bestValue)
     # 对整体的成员进行判断，是否符合预期
-    # 如果集合的 size 小于 tolN 
+    # 如果集合的 size 小于 tolN
     if (shape(mat0)[0] < tolN) or (shape(mat1)[0] < tolN): # 当最佳划分后，集合过小，也不划分，产生叶节点
         return None, leafType(dataSet)
     return bestIndex, bestValue
@@ -168,6 +168,7 @@ def createTree(dataSet, leafType=regLeaf, errType=regErr, ops=(1, 4)):
     # 递归的进行调用，在左右子树中继续递归生成树
     retTree['left'] = createTree(lSet, leafType, errType, ops)
     retTree['right'] = createTree(rSet, leafType, errType, ops)
+    # print "debug createTree:>", createTree(rSet, leafType, errType, ops)
     return retTree
 
 
@@ -209,7 +210,7 @@ def prune(tree, testData):
         从上而下找到叶节点，用测试数据集来判断将这些叶节点合并是否能降低测试误差
     Args:
         tree -- 待剪枝的树
-        testData -- 剪枝所需要的测试数据 testData 
+        testData -- 剪枝所需要的测试数据 testData
     Returns:
         tree -- 剪枝完成的树
     """
@@ -230,7 +231,7 @@ def prune(tree, testData):
     # 上面的一系列操作本质上就是将测试数据集按照训练完成的树拆分好，对应的值放到对应的节点
 
     # 如果左右两边同时都不是dict字典，也就是左右两边都是叶节点，而不是子树了，那么分割测试数据集。
-    # 1. 如果正确 
+    # 1. 如果正确
     #   * 那么计算一下总方差 和 该结果集的本身不分枝的总方差比较
     #   * 如果 合并的总方差 < 不合并的总方差，那么就进行合并
     # 注意返回的结果： 如果可以合并，原来的dict就变为了 数值
@@ -290,7 +291,7 @@ def linearSolve(dataSet):
     Args:
         dataSet -- 输入数据
     Returns:
-        ws -- 执行线性回归的回归系数 
+        ws -- 执行线性回归的回归系数
         X -- 格式化自变量X
         Y -- 格式化目标变量Y
     """
@@ -409,38 +410,38 @@ if __name__ == "__main__":
     mat0, mat1 = binSplitDataSet(testMat, 1, 0.5)
     print mat0, '\n-----------\n', mat1
 
-    # # 回归树
-    # myDat = loadDataSet('input/9.RegTrees/data1.txt')
-    # # myDat = loadDataSet('input/9.RegTrees/data2.txt')
-    # # print 'myDat=', myDat
-    # myMat = mat(myDat)
-    # # print 'myMat=',  myMat
-    # myTree = createTree(myMat)
-    # print myTree
+    # 回归树
+    myDat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/data1.txt')
+    # myDat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/data2.txt')
+    # print 'myDat=', myDat
+    myMat = mat(myDat)
+    # print 'myMat=',  myMat
+    myTree = createTree(myMat)
+    print myTree
 
-    # # 1. 预剪枝就是：提起设置最大误差数和最少元素数
-    # myDat = loadDataSet('input/9.RegTrees/data3.txt')
-    # myMat = mat(myDat)
-    # myTree = createTree(myMat, ops=(0, 1))
-    # print myTree
+    # 1. 预剪枝就是：提前设置最大误差数和最少元素数
+    myDat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/data3.txt')
+    myMat = mat(myDat)
+    myTree = createTree(myMat, ops=(0, 1))
+    print myTree
 
-    # # 2. 后剪枝就是：通过测试数据，对预测模型进行合并判断
-    # myDatTest = loadDataSet('input/9.RegTrees/data3test.txt')
-    # myMat2Test = mat(myDatTest)
-    # myFinalTree = prune(myTree, myMat2Test)
-    # print '\n\n\n-------------------'
-    # print myFinalTree
+    # 2. 后剪枝就是：通过测试数据，对预测模型进行合并判断
+    myDatTest = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/data3test.txt')
+    myMat2Test = mat(myDatTest)
+    myFinalTree = prune(myTree, myMat2Test)
+    print '\n\n\n-------------------'
+    print myFinalTree
 
-    # # --------
-    # # 模型树求解
-    # myDat = loadDataSet('input/9.RegTrees/data4.txt')
-    # myMat = mat(myDat)
-    # myTree = createTree(myMat, modelLeaf, modelErr)
-    # print myTree
+    # --------
+    # 模型树求解
+    myDat = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/data4.txt')
+    myMat = mat(myDat)
+    myTree = createTree(myMat, modelLeaf, modelErr)
+    print myTree
 
     # # # 回归树 VS 模型树 VS 线性回归
-    # trainMat = mat(loadDataSet('input/9.RegTrees/bikeSpeedVsIq_train.txt'))
-    # testMat = mat(loadDataSet('input/9.RegTrees/bikeSpeedVsIq_test.txt'))
+    # trainMat = mat(loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/bikeSpeedVsIq_train.txt'))
+    # testMat = mat(loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/9.RegTrees/bikeSpeedVsIq_test.txt'))
     # # # 回归树
     # myTree1 = createTree(trainMat, ops=(1, 20))
     # print myTree1

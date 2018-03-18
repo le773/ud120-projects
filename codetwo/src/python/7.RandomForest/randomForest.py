@@ -11,6 +11,8 @@ Random Forest Algorithm on Sonar Dataset
 Flying_sfeng博客地址：http://blog.csdn.net/flying_sfeng/article/details/64133822
 在此表示感谢你的代码和注解， 我重新也完善了个人注解
 '''
+
+print(__doc__)
 from random import seed, randrange, random
 import os
 
@@ -120,11 +122,13 @@ def get_split(dataset, n_features):
             features.append(index)
     for index in features:                    # 在 n_features 个特征中选出最优的特征索引，并没有遍历所有特征，从而保证了每课决策树的差异性
         for row in dataset:
-            groups = test_split(index, row[index], dataset)  # groups=(left, right), row[index] 遍历每一行 index 索引下的特征值作为分类值 value, 找出最优的分类特征和特征值
+            # groups=(left, right), row[index] 遍历每一行 index 索引下的特征值作为分类值 value, 找出最优的分类特征和特征值
+            groups = test_split(index, row[index], dataset)
             gini = gini_index(groups, class_values)
             # 左右两边的数量越一样，说明数据区分度不高，gini系数越大
             if gini < b_score:
-                b_index, b_value, b_score, b_groups = index, row[index], gini, groups  # 最后得到最优的分类特征 b_index,分类特征值 b_value,分类结果 b_groups。b_value 为分错的代价成本
+                # 最后得到最优的分类特征 b_index,分类特征值 b_value,分类结果 b_groups。b_value 为分错的代价成本
+                b_index, b_value, b_score, b_groups = index, row[index], gini, groups
     # print b_score
     return {'index': b_index, 'value': b_value, 'groups': b_groups}
 
@@ -185,6 +189,7 @@ def build_tree(train, max_depth, min_size, n_features):
 
 # Make a prediction with a decision tree
 def predict(node, row):   # 预测模型分类结果
+    # print "node:>",node
     if row[node['index']] < node['value']:
         if isinstance(node['left'], dict):       # isinstance 是 Python 中的一个内建函数。是用来判断一个对象是否是一个已知的类型。
             return predict(node['left'], row)
@@ -210,6 +215,8 @@ def bagging_predict(trees, row):
 
     # 使用多个决策树trees对测试集test的第row行进行预测，再使用简单投票法判断出该行所属分类
     predictions = [predict(tree, row) for tree in trees]
+    # print 'predictions:>', predictions
+    # ['M', 'M', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'R', 'M', 'R', 'R', 'M', 'R', 'R', 'R', 'R', 'R']
     return max(set(predictions), key=predictions.count)
 
 
@@ -255,11 +262,13 @@ def random_forest(train, test, max_depth, min_size, sample_size, n_trees, n_feat
     # n_trees 表示决策树的数量
     for i in range(n_trees):
         # 随机抽样的训练样本， 随机采样保证了每棵决策树训练集的差异性
+        # size:len(train) * sample_size
         sample = subsample(train, sample_size)
         # 创建一个决策树
         tree = build_tree(sample, max_depth, min_size, n_features)
         trees.append(tree)
-
+    # print 'trees:>', trees
+    #
     # 每一行的预测结果，bagging 预测最后的分类结果
     predictions = [bagging_predict(trees, row) for row in test]
     return predictions
@@ -326,7 +335,7 @@ if __name__ == '__main__':
 
     # 加载数据
     dataset = loadDataSet(os.getcwd() + "\\codetwo\\" + 'input/7.RandomForest/sonar-all-data.txt')
-    # print dataset
+    print dataset[-1]
 
     n_folds = 5        # 分成5份数据，进行交叉验证
     max_depth = 20     # 调参（自己修改） #决策树深度不能太深，不然容易导致过拟合
@@ -342,3 +351,30 @@ if __name__ == '__main__':
         print 'Trees: %d' % n_trees
         print 'Scores: %s' % scores
         print 'Mean Accuracy: %.3f%%' % (sum(scores)/float(len(scores)))
+
+'''
+random= 0.134364244112
+Trees: 1
+Scores: [70.73170731707317, 80.48780487804879, 82.92682926829268, 78.04878048780488, 78.04878048780488]
+Mean Accuracy: 78.049%
+random= 0.134364244112
+Trees: 10
+Scores: [92.6829268292683, 92.6829268292683, 87.8048780487805, 78.04878048780488, 92.6829268292683]
+Mean Accuracy: 88.780%
+random= 0.134364244112
+Trees: 20
+Scores: [92.6829268292683, 95.1219512195122, 92.6829268292683, 80.48780487804879, 95.1219512195122]
+Mean Accuracy: 91.220%
+random= 0.134364244112
+Trees: 30
+Scores: [95.1219512195122, 87.8048780487805, 95.1219512195122, 80.48780487804879, 92.6829268292683]
+Mean Accuracy: 90.244%
+random= 0.134364244112
+Trees: 40
+Scores: [95.1219512195122, 90.2439024390244, 97.5609756097561, 78.04878048780488, 97.5609756097561]
+Mean Accuracy: 91.707%
+random= 0.134364244112
+Trees: 50
+Scores: [92.6829268292683, 92.6829268292683, 95.1219512195122, 80.48780487804879, 97.5609756097561]
+Mean Accuracy: 91.707%
+'''
