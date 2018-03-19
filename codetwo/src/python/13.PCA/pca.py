@@ -32,6 +32,8 @@ def pca(dataMat, topNfeat=9999999):
 
     # 计算每一列的均值
     meanVals = mean(dataMat, axis=0)
+    # dataMat: (1567L, 590L)
+    print 'dataMat:', shape(dataMat)
     # print 'meanVals', meanVals
 
     # 每个向量同时都减去 均值
@@ -49,42 +51,37 @@ def pca(dataMat, topNfeat=9999999):
     当 cov(X, Y)=0时，表明X与Y不相关。
     '''
     covMat = cov(meanRemoved, rowvar=0)
-
+    print 'covMat:', shape(covMat)
     # eigVals为特征值， eigVects为特征向量
     eigVals, eigVects = linalg.eig(mat(covMat))
-    print 'eigVals=', eigVals
+    # print 'eigVals=', eigVals
     # print 'eigVects=', eigVects
     # 对特征值，进行从小到大的排序，返回从小到大的index序号
     # 特征值的逆序就可以得到topNfeat个最大的特征向量
-    '''
-    >>> x = np.array([3, 1, 2])
-    >>> np.argsort(x)
-    array([1, 2, 0])  # index,1 = 1; index,2 = 2; index,0 = 3
-    >>> y = np.argsort(x)
-    >>> y[::-1]
-    array([0, 2, 1])
-    >>> y[:-3:-1]
-    array([0, 2])  # 取出 -1, -2
-    >>> y[:-6:-1]
-    array([0, 2, 1])
-    '''
+
     # 特征值排序索引，从小到大
     eigValInd = argsort(eigVals)
-    print 'eigValInd1=', eigValInd
+    # print 'eigValInd1=', eigValInd
 
     # -1表示倒序，返回topN的特征值[-1 到 -(topNfeat+1) 但是不包括-(topNfeat+1)本身的倒叙]
     # 特征索引
     eigValInd = eigValInd[:-(topNfeat+1):-1]
     print 'eigValInd2=', eigValInd
     # 重组 eigVects 最大到最小
+    print 'eigVects:', shape(eigVects)
     redEigVects = eigVects[:, eigValInd]
-    print 'redEigVects=', redEigVects.T
+    # (590L, 20L)
+    print 'redEigVects=', shape(redEigVects)
     # 将数据转换到新空间
-    # print "---", shape(meanRemoved), shape(redEigVects)
+    # (1567L, 590L) (590L, 20L) (1L, 590L)
+    print "---", shape(meanRemoved), shape(redEigVects),shape(meanVals)
     lowDDataMat = meanRemoved * redEigVects
+    print "lowDDataMat:", shape(lowDDataMat)
     reconMat = (lowDDataMat * redEigVects.T) + meanVals
-    print 'lowDDataMat=', lowDDataMat
-    print 'reconMat=', reconMat
+
+    # print 'lowDDataMat=', lowDDataMat
+    # reconMat= (1567L, 590L)
+    print 'reconMat=', shape(reconMat)
     return lowDDataMat, reconMat
 
 
@@ -103,6 +100,7 @@ def replaceNanWithMean():
 def show_picture(dataMat, reconMat):
     fig = plt.figure()
     ax = fig.add_subplot(111)
+    # print 'dataMat:', shape(dataMat[:, 0].flatten())
     ax.scatter(dataMat[:, 0].flatten().A[0], dataMat[:, 1].flatten().A[0], marker='^', s=90)
     ax.scatter(reconMat[:, 0].flatten().A[0], reconMat[:, 1].flatten().A[0], marker='o', s=50, c='red')
     plt.show()
@@ -151,4 +149,4 @@ if __name__ == "__main__":
     analyse_data(dataMat)
     lowDmat, reconMat = pca(dataMat, 20)
     print shape(lowDmat)
-    show_picture(dataMat, reconMat)
+    # show_picture(dataMat, reconMat)
