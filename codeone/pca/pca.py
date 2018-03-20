@@ -124,7 +124,19 @@ from sklearn.decomposition import PCA
 pca = PCA(n_components=2) # 保留2个主成分
 lr = LogisticRegression() # 创建逻辑回归对象
 X_train_pca = pca.fit_transform(X_train_std) # 把原始训练集映射到主成分组成的子空间中
+# 可释方差
+# 每一个主成分占数据变动的比例
+print 'explained_variance_ratio_:', pca.explained_variance_ratio_
 X_test_pca = pca.transform(X_test_std) # 把原始测试集映射到主成分组成的子空间中
+
+# 从pca的成分属性中获取主成分的数据，也就是重要程度
+first_pc = pca.components_[0] # 也即 first
+second_pc = pca.components_[1]
+
+print 'first_pc:', first_pc
+print 'second_pc:', second_pc
+
+
 lr.fit(X_train_pca, y_train) # 用逻辑回归拟合数据
 plot_decision_regions(X_train_pca, y_train, classifier=lr)
 lr.score(X_test_pca, y_test) # 0.98 在测试集上的平均正确率为0.98
