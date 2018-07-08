@@ -1,0 +1,7 @@
+data
+__pycache__
+.ipynb_checkpoints
+*.html
+*.p
+save.*
+checkpoint
