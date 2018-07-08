@@ -1,0 +1,12 @@
+data
+__pycache__
+.ipynb_checkpoints
+*.html
+*.p
+save.*
+checkpoint
+images/
+real_life_images/
+requirements/
+saved_models/
+test_img/
