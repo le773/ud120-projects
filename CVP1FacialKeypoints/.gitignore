@@ -1,0 +1,12 @@
+data
+__pycache__
+.ipynb_checkpoints
+*.html
+*.p
+save.*
+checkpoint
+*.txt
+LICENSE
+saved_models
+images
+detector_architectures
